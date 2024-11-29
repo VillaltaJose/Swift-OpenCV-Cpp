@@ -101,3 +101,21 @@ This conversion allows frames from Swift to be processed in C++ with OpenCV and 
 
 ### OpenCV Filter Implementation
 
+
+## Usage/Examples
+Below are screenshots showcasing the application in action on a physical device:  
+
+- **Left**: Frame captured and processed using the **device camera**.  
+- **Right**: Frame captured and processed using the **RTSP camera connection**.  
+
+![Usage Example](./example-filter-applied.png)  
+### Contributing  
+Contributions to this project are welcome! Here’s how you can help:  
+
+1. **Create a New Issue**: If you encounter any bugs, have feature requests, or suggestions for improvements, feel free to open a new issue in the repository.  
+2. **Fork the Repository**: Make your own copy of the repository, implement your changes, and submit a pull request for review.  
+
+#### Pending Tasks  
+If you're looking for areas to contribute, here are some tasks currently in need of attention:  
+- **Code Cleanup**: Refactor and improve the existing code for better readability and maintainability.  
+- **Filter Optimization**: Enhance the performance and efficiency of the C++ filter implementation.  
