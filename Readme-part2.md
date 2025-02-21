@@ -123,3 +123,54 @@ Command used for negative samples:
 find ./DatasetNegative/ -iname "*.jpg" > dataset.txt
 ```
 
+### **Training the Cascade Classifier**
+
+The model was trained using `opencv_traincascade` with **LBP features**:
+
+```
+opencv_traincascade -data cascade/ -vec positives.vec -bg dataset.txt -numPos 3700 -numNeg 4000 -numStages 20 -w 24 -h 24 -featureType LBP
+
+```
+
+#### **Training Parameters**
+
+-   `numPos 3700`: Number of positive samples used.
+-   `numNeg 4000`: Number of negative samples used.
+-   `numStages 20`: Number of training stages.
+-   `featureType LBP`: Used LBP instead of Haar features.
+-   `w 24 -h 24`: Resized all images to `24x24` pixels.
+
+#### **Training Results**
+
+-   The training reached **19 stages**, with a high **hit rate (HR)** and decreasing **false alarm rate (FA)**.
+-   Achieved **>99% accuracy** on training data.
+
+##### **Training Evolution Graphs**
+
+-   **Detection Rate Evolution**  
+    ![Detection Rate](./evi1.png)
+    
+-   **False Alarm Rate Evolution**  
+    ![False Alarm Rate](./evi2.png)
+    
+
+## **Results and Evaluation**
+
+The final system was tested under different lighting conditions and angles. **Detection results:**
+
+-   **High accuracy in controlled environments**.
+-   **Reduced false positives** due to **LBP robustness**.
+-   **Real-time performance with low computational cost**.
+
+### **Example Detection**
+
+Below are two examples of object detection using the implemented system:
+
+#### **Example 1**
+![Detection Example 1](path/to/your/image1.png)
+
+#### **Example 2**
+![Detection Example 2](path/to/your/image2.png)
+
+> *Figure 6.1: Examples of detected objects with bounding boxes.*
+
