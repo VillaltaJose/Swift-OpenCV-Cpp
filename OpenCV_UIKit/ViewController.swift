@@ -2,6 +2,7 @@ import UIKit
 import AVFoundation
 import MobileVLCKit
 
+
 class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate, VLCMediaPlayerDelegate {
     @IBOutlet weak var switchClahe: UISwitch!
     @IBOutlet weak var btnSubmit: UIButton!
@@ -16,13 +17,21 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     private var isRTSPActive = false // Controlar si estamos en modo RTSP o cámara local
     private var frameCaptureTimer: Timer? // Timer para capturar frames del RTSP
     private var bridge: FilterApplicatorBridge = FilterApplicatorBridge()
+    private var bridgeLBP: LBPDescriptorBridge = LBPDescriptorBridge()
     var referenceMatPointer: UnsafeMutableRawPointer?
     var useClaheFromSwitch: Bool = false
+    private var classifier: UnsafeMutableRawPointer? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         textField.text = "http://172.20.10.3:81/stream" // URL por defecto
+        
+        if let xmlPath = Bundle.main.path(forResource: "cascade", ofType: "xml") {
+            classifier = bridgeLBP.loadClassifier(xmlPath)
+        } else {
+            print("No se encontró el archivo cascade.xml en el bundle.")
+        }
         
         self.switchClahe.addTarget(self, action: #selector(onSwitchValueChanged(_:)), for: .valueChanged)
         
@@ -62,8 +71,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard !isRTSPActive else { return } // Ignorar frames si el RTSP está activo
-        
         guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
         CVPixelBufferLockBaseAddress(imageBuffer, CVPixelBufferLockFlags.readOnly)
@@ -72,36 +79,43 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         let bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer)
         let width = CVPixelBufferGetWidth(imageBuffer)
         let height = CVPixelBufferGetHeight(imageBuffer)
-        
+
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         var bitmapInfo: UInt32 = CGBitmapInfo.byteOrder32Little.rawValue
-        bitmapInfo |= CGImageAlphaInfo.premultipliedFirst.rawValue & CGBitmapInfo.alphaInfoMask.rawValue
-        
-        let context = CGContext(data: baseAddress, width: width, height: height, bitsPerComponent: 8, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo)
-        
+        bitmapInfo |= CGImageAlphaInfo.noneSkipFirst.rawValue  // Evita canal alpha
+
+        let context = CGContext(data: baseAddress, width: width, height: height,
+                                bitsPerComponent: 8, bytesPerRow: bytesPerRow,
+                                space: colorSpace, bitmapInfo: bitmapInfo)
+
         guard let quartzImage = context?.makeImage() else { return }
         CVPixelBufferUnlockBaseAddress(imageBuffer, CVPixelBufferLockFlags.readOnly)
-        
+
         let image = UIImage(cgImage: quartzImage)
-        
-        if let pointer = referenceMatPointer {
-            let imageWithFilterApplied = bridge.apply_filter(image, useClahe: useClaheFromSwitch ? 1 : 0, withReferenceMat: pointer)
-            
-            DispatchQueue.main.async {
-                self.imageView.image = imageWithFilterApplied
-                self.processedImageView.image = imageWithFilterApplied
-            }
-        } else {
-            print("Error al obtener el puntero de imagenes.")
-            
-            let imageWithFilterApplied = bridge.apply_filter(image)
-            
-            DispatchQueue.main.async {
-                self.imageView.image = imageWithFilterApplied
-                self.processedImageView.image = imageWithFilterApplied
+
+        DispatchQueue.main.async {
+            self.imageView.image = nil
+            self.processedImageView.image = nil
+            if self.segment.selectedSegmentIndex == 0 {
+                if let pointer = self.referenceMatPointer {
+                    let filteredImage = self.bridge.apply_filter(image, useClahe: 0, withReferenceMat: pointer)
+                    self.imageView.image = filteredImage
+                    self.processedImageView.image = filteredImage
+                } else {
+                    let filteredImage = self.bridge.apply_filter(image)
+                    self.imageView.image = filteredImage
+                    self.processedImageView.image = filteredImage
+                }
+            } else {
+                if let classifier = self.classifier {
+                    let detectedImage = self.bridgeLBP.detectObjects(in: image, withClassifier: classifier)
+                    self.imageView.image = detectedImage
+                    self.processedImageView.image = detectedImage
+                }
             }
         }
     }
+
     
     private func getFrames() {
         videoDataOutput.videoSettings = [(kCVPixelBufferPixelFormatTypeKey as NSString): NSNumber(value: kCVPixelFormatType_32BGRA)] as [String: Any]
@@ -299,7 +313,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             print("Cámara local activada")
         case 1: // RTSP
-            setupRTSPStream()
+           // setupRTSPStream()
             print("Transmisión RTSP activada")
         default:
             print("Opción desconocida")
@@ -322,3 +336,4 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
 }
+ 
