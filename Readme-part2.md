@@ -167,10 +167,111 @@ The final system was tested under different lighting conditions and angles. **De
 Below are two examples of object detection using the implemented system:
 
 #### **Example 1**
-![Detection Example 1](path/to/your/image1.png)
+![Detection Example 1](./res1.png)
 
 #### **Example 2**
-![Detection Example 2](path/to/your/image2.png)
+![Detection Example 2](./res2.png)
 
-> *Figure 6.1: Examples of detected objects with bounding boxes.*
+# **Image Detection with SIFT Using Flask and OpenCV**
+
+## **Introduction**
+This report presents the development of a **web-based image detection system** using **Flask** and **OpenCV**, leveraging the **Scale-Invariant Feature Transform (SIFT)** algorithm. The system aims to recognize a specific logo or symbol in user-provided images and real-time video streams.
+
+Feature-based image detection is widely used in **computer vision**, **object recognition**, **augmented reality**, and **security applications**. SIFT is particularly useful due to its **invariance to scale, rotation, and lighting conditions**, making it a robust technique for detecting objects in complex environments.
+
+## **Key Concepts**
+
+### **Feature Extraction in Images**
+Feature extraction is a fundamental step in image processing that involves detecting distinct points or patterns in an image. These features can include:
+
+- **Edges**: Sharp changes in pixel intensity.
+- **Corners**: Points where intensity gradients vary in multiple directions.
+- **Textures**: Repetitive patterns that define an object’s surface properties.
+
+SIFT extracts **keypoints** and generates unique **descriptors** for each feature, allowing for precise image comparison.
+
+### **SIFT Algorithm**
+SIFT is a **feature detection and description algorithm** developed by **David Lowe** in 1999. It is particularly advantageous for object recognition because it is **scale- and rotation-invariant**.
+
+The SIFT process consists of four main steps:
+
+1. **Keypoint Detection using Difference of Gaussian (DoG)**  
+   Identifies candidate keypoints across multiple scales.
+   
+2. **Keypoint Localization**  
+   Filters out unstable points and refines their positions.
+
+3. **Orientation Assignment**  
+   Determines the dominant gradient direction for each keypoint.
+
+4. **Descriptor Generation**  
+   Computes a 128-dimensional vector for each keypoint, enabling robust image matching.
+
+Example of detected keypoints using SIFT:
+
+![SIFT Keypoints](./res3.png)
+
+---
+
+### **Feature Matching**
+Once keypoints are detected in both the **reference image** and the **input image**, they must be compared to establish a match.
+
+**Brute-Force Matcher (BFMatcher)** is used for this purpose. It compares each descriptor from the reference logo with those from the input image and selects the closest matches.
+
+Example of feature matching between two images:
+
+![Feature Matching](./res4.png)
+
+### **Real-Time Video Detection**
+One of the most powerful applications of this system is **real-time video detection**. The process follows these steps:
+
+1. Capture a **frame** from the camera.
+2. Convert it to **grayscale** for faster processing.
+3. Extract **keypoints and descriptors** using SIFT.
+4. Match the extracted features with those from the reference image using **BFMatcher**.
+5. If a sufficient number of matches is found, keypoints are highlighted.
+6. The processed frame is displayed in real time.
+
+## **Results**
+To evaluate the system's performance, multiple test images were analyzed under different conditions.
+
+**1. Successful logo detection in a clear image:**  
+   - The system accurately identified the reference logo.  
+   - The detected keypoints were well-distributed across the object.  
+
+**2. Partial detection in a noisy image:**  
+   - The system detected some keypoints but struggled with occlusions.  
+   - Matching accuracy decreased in low-contrast areas.  
+
+Example of a detection result:
+
+![Detection Result](./res4.png)
+
+These results demonstrate that the algorithm is effective in most cases but can face challenges under **severe occlusions** or **extreme lighting variations**.
+
+## **Conclusion**
+This project successfully implemented a real-time detection system for **STOP** and **Pedestrian Crossing** signs using a **Cascade Classifier trained with LBP features**. The model demonstrated **high accuracy** and **low computational cost**, making it suitable for real-world applications. Despite challenges such as **false positives** and **lighting sensitivity**, the system performed well in controlled environments. Future improvements include **expanding the dataset**, **applying deep learning techniques (CNNs)** for enhanced robustness, and **developing a mobile application** for real-time deployment. This work highlights the potential of **traditional computer vision methods** for efficient and lightweight object detection.
+
+This project successfully demonstrates the application of **SIFT-based image detection** in a Flask web application. The key takeaways include:
+
+- **Feature-based object recognition using SIFT.**  
+- **Efficient matching using BFMatcher.**  
+- **Integration of real-time video processing within Flask.**  
+- **Potential applications in security, authentication, and automation.**  
+
+Despite its robustness, SIFT is computationally expensive. Future improvements could include:
+
+- **Implementing ORB or SURF** for faster performance.  
+- **Deep learning approaches** to enhance feature recognition.  
+- **GPU acceleration** for real-time video processing.  
+
+---
+
+## **References**
+- Lowe, D. G. (2004). "Distinctive Image Features from Scale-Invariant Keypoints". *International Journal of Computer Vision*.  
+- OpenCV Documentation: [https://docs.opencv.org/](https://docs.opencv.org/)  
+- Flask Documentation: [https://flask.palletsprojects.com/](https://flask.palletsprojects.com/)  
+
+---
+
 
