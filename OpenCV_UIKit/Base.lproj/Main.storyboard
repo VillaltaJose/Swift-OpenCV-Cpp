@@ -34,8 +34,8 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="1" green="0.98562681162061305" blue="0.98317836895926636" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <segments>
-                                    <segment title="Celular"/>
-                                    <segment title="Cámara IP"/>
+                                    <segment title="Filtro"/>
+                                    <segment title="LBP"/>
                                 </segments>
                                 <connections>
                                     <action selector="segmentValueChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="vgP-7l-GHl"/>
@@ -100,6 +100,7 @@
                     <view key="view" contentMode="scaleToFill" id="LLN-4c-lSg">
                         <rect key="frame" x="0.0" y="0.0" width="361" height="43"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="Qr0-HQ-TbT"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     </view>
                 </viewController>
