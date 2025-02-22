@@ -1,5 +1,5 @@
 ![Swift-OpenCV-Cpp](https://socialify.git.ci/VillaltaJose/Swift-OpenCV-Cpp/image?font=Bitter&language=1&name=1&owner=1&pattern=Plus&stargazers=1&theme=Light)
-
+# **Video:** https://drive.google.com/file/d/1DnYcgxI0pi-IjzFDDxy0fnh70WqaE9pH/view?usp=sharing   
 # **Final Report: Computer Vision Integrative Project**
 ## **Detection of STOP and Pedestrian Crossing Signs Using LBP and Cascade Classifier**
 This project implements a traffic sign detection system, specifically **STOP** and **Pedestrian Crossing** signs, using the **Local Binary Patterns (LBP)** technique and training an **OpenCV Cascade Classifier**. A supervised learning model was developed to detect these symbols in real time from images or video.
